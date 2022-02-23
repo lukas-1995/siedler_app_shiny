@@ -11,7 +11,7 @@ library(shinyWidgets)
 library(shinydashboard)
 library(shinyalert)
 library(odbc)
-library(RPostgreSQL)
+library(RMySQL)
 
 Sys.setenv(LANG = "en")
 Sys.setlocale("LC_ALL","English")
