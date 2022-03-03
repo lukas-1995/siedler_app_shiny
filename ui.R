@@ -9,9 +9,8 @@ library(rdrop2)
 library(stringi)
 library(shinyWidgets)
 library(shinydashboard)
-library(shinyalert)
 library(odbc)
-library(RMySQL)
+
 
 Sys.setenv(LANG = "en")
 Sys.setlocale("LC_ALL","English")
@@ -30,7 +29,6 @@ dashboardPage(skin="yellow",
             box(title = 'Einstellungen', width = '100%', #background="black",
                 solidHeader = T, status = 'warning',
                 useShinyjs(),
-                useShinyalert(),
                 textOutput("spielerconf"),
                 selectInput("version", "Siedler-Version:",
                             choices = c("Standardspiel (Version 1)"="1",
@@ -106,7 +104,7 @@ dashboardPage(skin="yellow",
                                                    "Seefahrer (Version 3)"="3",
                                                    "Städte und Ritter & Seefahrer (Version 4)"="4")),
                            uiOutput('playerpickhistout'),
-                           style = "gradient", circle = TRUE, status = "warning", icon = icon("gear"), width = "300px",
+                           style = "gradient", circle = TRUE, status = "warning", icon = icon("cog"), width = "300px",
                            tooltip = tooltipOptions(title = "Klicke um die Grafik zu verändern!")
                          ),
                          fluidRow(column(12, align="center",
@@ -138,7 +136,7 @@ dashboardPage(skin="yellow",
                                                    "Seefahrer (Version 3)"="3",
                                                    "Städte und Ritter & Seefahrer (Version 4)"="4")),
                            uiOutput('playerpickhisttout'),
-                           style = "gradient", circle = TRUE, status = "warning", icon = icon("gear"), width = "300px",
+                           style = "gradient", circle = TRUE, status = "warning", icon = icon("cog"), width = "300px",
                            tooltip = tooltipOptions(title = "Klicke um die Tabelle zu verändern!")
                          ),
                          fluidRow(column(12, align="center",

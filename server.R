@@ -29,17 +29,14 @@ library(shinyWidgets)
 library(shinydashboard)
 library(shinyalert)
 library(odbc)
-library(RMySQL)
 
-con <- DBI::dbConnect(odbc::odbc(),
-                      Driver   = "SQL server",
-                      Server   = "v2202104145393150207.luckysrv.de",
-                      Database = "siedler_app",
-                      UID      = "SA",
-                      PWD      = "nzdpXjmJaeh^X*5k3u^G2quZ6H@N3P",
-                      Port     = 1433)
-
-
+con <- dbConnect(odbc(),
+                 Driver   = "SQL server",
+                 Server   = "v2202104145393150207.luckysrv.de",
+                 #Database = "siedler_app",
+                 UID      = "SA",
+                 PWD      = "nzdpXjmJaeh^X*5k3u^G2quZ6H@N3P",
+                 Port     = 1433)
 
 
 
@@ -115,7 +112,7 @@ function(input,output, session){
 ######## Load data ##########
 #############################
   
-  user <- dbGetQuery(con, "SELECT * FROM Siedler")
+  user <- dbGetQuery(con, "SELECT * FROM [siedler_app].[dbo].[user]")
   names(user) <- "Users"
   
   
@@ -137,9 +134,9 @@ function(input,output, session){
     if (waits$user == input$new_user) {
       user <- data.frame(c(user$Users, waits$user))
       names(user) <- "Users"
-      dbWriteTable(con, "user", user, overwrite=T, row.names=F)
+      dbWriteTable(con, "[siedler_app].[dbo].[user]", user, overwrite=T, row.names=F)
     }
-    player_names <- dbGetQuery(con, "SELECT * FROM Name")
+    player_names <- dbGetQuery(con, "SELECT * FROM [siedler_app].[dbo].[Name]")
     names(player_names) <- c("Name", "Nutzer")
     player_names <- data.frame("Name" = player_names[player_names$Nutzer == waits$user,1])
     
@@ -206,7 +203,7 @@ function(input,output, session){
                   multiple = F)
     })
     
-    gsiedler <- dbGetQuery(con, "SELECT * FROM Siedler")
+    gsiedler <- dbGetQuery(con, "SELECT * FROM [siedler_app].[dbo].[Siedler]")
     gsiedler_user <- gsiedler[,length(gsiedler)]
     gsiedler <- data.frame(gsiedler[gsiedler$Nutzer == waits$user,1:length(gsiedler)-1])
     names(gsiedler) <- c("Datum", "Spieleranzahl", "Spieldauer", "Sieger", "Version", "Online", "2", "3", "4", "5", "6", "7",
@@ -530,7 +527,7 @@ function(input,output, session){
       )
       
       waits$resetindicator<-4# change button label
-      gsiedler <- dbGetQuery(con, "SELECT * FROM Siedler")
+      gsiedler <- dbGetQuery(con, "SELECT * FROM [siedler_app].[dbo].[Siedler]")
       gsiedler <- data.frame(gsiedler[gsiedler$Nutzer == waits$user,])
       gsiedler_user <- gsiedler[,length(gsiedler)]
       gsiedler <- data.frame(gsiedler[,1:length(gsiedler)-1])
@@ -580,11 +577,11 @@ function(input,output, session){
       names(tempset) <- c("Datum", "Spieleranzahl", "Spieldauer", "Sieger", "Version", "Online", "2", "3", "4", "5", "6", "7",
                           "8", "9", "10", "11", "12", "Spieler 1", "Spieler 2", "Spieler 3", "Spieler 4", "Spieler 5", "Spieler 6")
       waits$statistik_new <- tempset
-      gsiedler <- dbGetQuery(con, "SELECT * FROM Siedler")
+      gsiedler <- dbGetQuery(con, "SELECT * FROM [siedler_app].[dbo].[Siedler]")
       tempset1 <- rbind(gsiedler, setNames(data.frame(c(tempset[nrow(tempset),], waits$user)), names(gsiedler)))
       names(tempset1) <- c("Datum", "Spieleranzahl", "Spieldauer", "Sieger", "Version", "Online", "2", "3", "4", "5", "6", "7",
                           "8", "9", "10", "11", "12", "Spieler 1", "Spieler 2", "Spieler 3", "Spieler 4", "Spieler 5", "Spieler 6", "Nutzer")
-      dbWriteTable(con, "Siedler", tempset1, overwrite=T, row.names=F, col.names=T)
+      dbWriteTable(con, "[siedler_app].[dbo].[Siedler]", tempset1, overwrite=T, row.names=F, col.names=T)
    
     }
     
@@ -734,14 +731,14 @@ function(input,output, session){
       req(input$new_user!="")
       
             
-      player_names <- dbGetQuery(con, "SELECT * FROM Name")
+      player_names <- dbGetQuery(con, "SELECT * FROM [siedler_app].[dbo].[Name]")
       player_names_users <- player_names[,2] 
       player_names <- data.frame("Name" = player_names[,1])
       
       player_names <- data.frame("Name" = c(player_names$Name, input$new_user), "Nutzer" = c(player_names_users, waits$user))
-      dbWriteTable(con, "Name", player_names, overwrite=T, row.names=F, col.names=T)
+      dbWriteTable(con, "[siedler_app].[dbo].[Name]", player_names, overwrite=T, row.names=F, col.names=T)
       
-      player_names <- dbGetQuery(con, "SELECT * FROM Name")
+      player_names <- dbGetQuery(con, "SELECT * FROM [siedler_app].[dbo].[Name]")
       names(player_names) <- c("Name", "Nutzer")
       player_names <- data.frame("Name" = player_names[player_names$Nutzer == waits$user,1])
       
@@ -816,11 +813,11 @@ function(input,output, session){
     # What happens when a player is deleted
     observeEvent(input$delplconf,{
       
-      player_names <- dbGetQuery(con, "SELECT * FROM Name")
+      player_names <- dbGetQuery(con, "SELECT * FROM [siedler_app].[dbo].[Name]")
       num_kick <- which(player_names$Name==input$del_player & player_names$Nutzer == waits$user)
       player_names <- player_names[-num_kick,]
 
-      dbWriteTable(con, "Name", player_names, overwrite=T, row.names=F, col.Names=T)
+      dbWriteTable(con, "[siedler_app].[dbo].[Name]", player_names, overwrite=T, row.names=F, col.Names=T)
       player_names <- player_names[(player_names$Nutzer == waits$user),]
       output$playerpickchoice<-renderUI({
         pickerInput(inputId = "playerpick", 
@@ -921,7 +918,7 @@ function(input,output, session){
       df$inp <- 0
       
       
-      gsiedler <- dbGetQuery(con, "SELECT * FROM Siedler")
+      gsiedler <- dbGetQuery(con, "SELECT * FROM [siedler_app].[dbo].[Siedler]")
       gsiedler_user <- gsiedler[,length(gsiedler)]
       gsiedler <- data.frame(gsiedler[gsiedler$Nutzer == waits$user,1:length(gsiedler)-1])
       names(gsiedler) <- c("Datum", "Spieleranzahl", "Spieldauer", "Sieger", "Version", "Online", "2", "3", "4", "5", "6", "7",
@@ -934,7 +931,7 @@ function(input,output, session){
       gsiedler$`Spieler 6` <- stri_replace_all_regex(gsiedler$`Spieler 6`, "^\\s+|\\s+$", "")
       waits$statistik_new <- gsiedler
       
-      player_names <- dbGetQuery(con, "SELECT * FROM Name")
+      player_names <- dbGetQuery(con, "SELECT * FROM [siedler_app].[dbo].[Name]")
       names(player_names) <- c("Name", "Nutzer")
       player_names <- data.frame("Name" = player_names[player_names$Nutzer == waits$user,1])
       
