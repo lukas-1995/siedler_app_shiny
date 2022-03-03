@@ -38,7 +38,7 @@ con <- dbConnect(odbc(),
                  PWD      = "nzdpXjmJaeh^X*5k3u^G2quZ6H@N3P",
                  Port     = 1433)
 
-
+ 
 
 #############################################
 ######## Initialise server funtion ##########
