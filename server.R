@@ -320,10 +320,20 @@ function(input,output, session){
   
   # When to show button to choose winner
   observe({
-    if (waits$resetindicator==3 | waits$resetindicator==4) {
-      shinyjs::show("txt")
+    if (waits$resetindicator==3) {
+      shinyjs::show("winner1")
     } else {
-      shinyjs::hide("txt")
+      shinyjs::hide("winner1")
+    }
+  }) 
+  # When to show button to choose winner
+  observe({
+    if (waits$resetindicator==3 | waits$resetindicator==4) {
+      shinyjs::show("winner2")
+      shinyjs::show("line_over_winner")
+    } else {
+      shinyjs::hide("winner2")
+      shinyjs::hide("line_over_winner")
     }
   })
   
